@@ -9,8 +9,9 @@ function findTwosum(nums, target) {
     if (obj.hasOwnProperty(secondNum)) {
       return [obj[secondNum], i];
     }
+    obj[nums[i]] = i;
   }
-  obj[nums[i]] = i;
+  
 }
 try {
   const nums = [2, 7, 11, 15];
