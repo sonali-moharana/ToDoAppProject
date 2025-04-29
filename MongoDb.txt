@@ -1,0 +1,81 @@
+db.sales.insertMany([{
+    //"_id": ObjectId("d43657dtfgjhkhgfhdfbgnhjk"),
+    "date": ISODate("2024-06-15T00:00:00Z"),
+    "store": "Store A",
+    "items": [
+        {
+            "name": "item1",
+            "quantity": 5,
+            "price": 10.0
+        },
+        {
+            "name": "item2",
+            "quantity": 3,
+            "price": 20.0
+        }
+
+    ]
+},
+{
+"date": ISODate("2024-06-16T00:00:00Z"),
+    "store": "Store B",
+    "items": [
+        {
+            "name": "item1",
+            "quantity": 9,
+            "price": 15.0
+        },
+        {
+            "name": "item2",
+            "quantity": 3,
+            "price": 24.0
+        }
+    ]
+}
+]);
+
+db.sales.aggregate([
+  {
+    $unwind: "$items"
+  },
+  {
+    $project: {
+      store: 1,
+      month: { $dateToString: { format: "%Y-%m", date: "$date" } }, // Extract month
+      itemRevenue: { $multiply: ["$items.quantity", "$items.price"] },
+      itemPrice: "$items.price"
+    }
+  },{
+    $group: {
+      _id: { store: "$store", month: "$month" },
+      totalRevenue: { $sum: "$itemRevenue" },
+      averagePrice: { $avg: "$itemPrice" }
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      store: "$_id.store",
+      month: "$_id.month",
+      totalRevenue: 1,
+      averagePrice: 1
+    }
+  },
+  {
+    $sort: {
+      store: 1,
+      month: 1
+    }
+  }
+])
+
+OutPut:
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+		ObjectId("680fa1e4d56542270566fa49"),
+		ObjectId("680fa1e4d56542270566fa4a")
+	]
+}
+{ "totalRevenue" : 110, "averagePrice" : 15, "store" : "Store A", "month" : "2024-06" }
+{ "totalRevenue" : 207, "averagePrice" : 19.5, "store" : "Store B", "month" : "2024-06" }
