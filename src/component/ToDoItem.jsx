@@ -11,7 +11,6 @@ const ToDoItem = ({ todo, toggleComplete, deleteTodo }) => {
       >
         {todo.text}
       </span>
-      <span>{todo.date}</span>
       <button
         className="btn btn-sm btn-danger"
         onClick={() => deleteTodo(todo.id)}

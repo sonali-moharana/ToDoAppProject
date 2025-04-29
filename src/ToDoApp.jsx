@@ -20,7 +20,6 @@ const TodoApp = () => {
     const newTodo = {
       id: Date.now(),
       text,
-      date,
       completed: false,
     };
     setTodos([newTodo, ...todos]);
